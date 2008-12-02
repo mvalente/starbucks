@@ -226,6 +226,10 @@ function ProcessRequest( status, headers, output, close ) {
 	if ( !file.exist || file.info.type != File.FILE_FILE ) {
 
 		var message = 'file not found '+root+NormalizePath(status.path);
+	var file = new File( root + NormalizePath(status.path) );
+	if ( !file.exist || file.info.type != File.FILE_FILE ) {
+
+		var message = 'file not found';
 		output(CreateHttpHeaders( 404, {'Content-Length':message.length, 'Content-Type':'text/plain'} ));
 		output(message);
 		return Noop;
@@ -262,6 +266,7 @@ function ProcessRequest( status, headers, output, close ) {
 			var ContentEncoding = Identity;
 
 /*
+
 			if ( headers.acceptencoding && headers.acceptencoding.indexOf('deflate') != -1 ) {
 
 				respondeHeaders['Content-Encoding'] = 'deflate';
@@ -444,5 +449,4 @@ try {
 } catch(ex) {
 	throw(ex);
 }
-
 
