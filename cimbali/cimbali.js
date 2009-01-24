@@ -33,7 +33,8 @@ function main()
      // Setup callback to deal with incoming connections
      httpPort.readable = function() 
           {
-  		var httpSocket = httpPort.Accept();
+		httpSocket = new Socket();
+  		httpSocket = httpPort.Accept();
   
   		descriptorList.push(httpSocket);
 
@@ -43,15 +44,23 @@ function main()
   					{
 					Print("On socket: "+s.sockName+","+s.sockPort + "\n");
 					Print("On socket: "+s.peerName+","+s.peerPort + "\n");
-  					var data = s.Read();
+
+
+					data='';
+					while(s.available)
+					{
+  					  var data = data + s.Read(s.available);
+					}
 
 					Print(data);
   					processHTTPConnectionRequest(data,s);
+
 
 					// delete s.readable;
      					CloseConnection(s);
 
   					}
+
   	}
 
 
@@ -121,11 +130,11 @@ function ProcessGet(resource,s)
         if ( !file.exist || file.info.type != File.FILE_FILE ) 
 	{
 		Print('File not found');
-		s.Write("HTTP/1.1 404 Not Found\n\n<html><body>404 error</body></html>");
+		s.Write("HTTP/1.0 404 Not Found\n\n<html><body>404 error</body></html>");
 		return;
         }
 	file.Open( File.RDONLY );
-	s.TransmitFile(file, false, "HTTP/1.1 200 OK\n\n")
+	s.TransmitFile(file, false, "HTTP/1.0 200 OK\n\n")
 	file.Sync();
 	file.Close();
 
@@ -147,7 +156,7 @@ function ProcessPost(resource,body,s)
         file.Close();
 
         file.Open( File.RDONLY );
-	s.TransmitFile(file, false, "HTTP/1.1 200 OK\nX-ID: 123456789\n\n")
+	s.TransmitFile(file, false, "HTTP/1.0 200 OK\nX-ID: 123456789\n\n")
         file.Sync();
         file.Close();
 
