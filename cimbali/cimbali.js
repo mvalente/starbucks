@@ -10,8 +10,6 @@ var configuration = { port:8080, address:'0.0.0.0', docroot:'/var/www/db' };
 var descriptorList = [];
 
 
-
-
 main();
 
 function main()
