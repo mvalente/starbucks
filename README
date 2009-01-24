@@ -27,5 +27,12 @@ TODO
 
 
 
+2009/01/29
+
+Added some changes to try and figure out the single POST
+being accepted but no luck. Apparently the POST triggers
+the 'readable' function twice, once for headers and the other
+for the body.
+
 -- MV
 

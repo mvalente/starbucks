@@ -45,6 +45,7 @@ function main()
 					Print("On socket: "+s.peerName+","+s.peerPort + "\n");
 
 
+					// Try to read multiple times
 					data='';
 					while(s.available)
 					{
