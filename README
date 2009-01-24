@@ -11,10 +11,12 @@ files should reside at /var/www/db by default. Create index.html
 at that dir and access http://localhost/index.html to test
 
 
+
 STATUS
 
 - Barebones webserver running
 - Answers both GET and POST
+
 
 
 TODO
