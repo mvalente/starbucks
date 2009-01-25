@@ -41,8 +41,8 @@ function main()
   		// Setup callback to deal with incoming data
   		httpSocket.readable = function(s)
   					{
-					Print("On socket: "+s.sockName+","+s.sockPort + "\n");
-					Print("On socket: "+s.peerName+","+s.peerPort + "\n");
+					// Print("On socket: "+s.sockName+","+s.sockPort + "\n");
+					// Print("On socket: "+s.peerName+","+s.peerPort + "\n");
 
 
 					// Try to read multiple times
@@ -52,12 +52,12 @@ function main()
   					  var data = data + s.Read(s.available);
 					}
 
-					Print(data);
+					// Print(data);
   					processHTTPConnectionRequest(data,s);
 
 
 					// delete s.readable;
-     					CloseConnection(s);
+     					// CloseConnection(s);
 
   					}
 
@@ -96,7 +96,7 @@ function CloseConnection(s)
 function processHTTPConnectionRequest(data,s)
 {
 	
-	Print('\n\n NEW REQUEST\n');
+	// Print('\n\n NEW REQUEST\n');
 	Print(data);
 
 	[ headers, body ] = data.split('\r\n\r\n');
@@ -105,9 +105,9 @@ function processHTTPConnectionRequest(data,s)
 	headerlines = headers.split('\r\n');
 
  	[ method, resource, protocol] = headerlines[0].split(' ');
-	Print('METHOD: ' + method + '\n');
-	Print('RESOURCE: ' + resource + '\n');
-	Print('PROTOCOL: ' + protocol + '\n');
+	// Print('METHOD: ' + method + '\n');
+	// Print('RESOURCE: ' + resource + '\n');
+	// Print('PROTOCOL: ' + protocol + '\n');
 
 
         switch (method) 
@@ -119,7 +119,7 @@ function processHTTPConnectionRequest(data,s)
 		ProcessPost( resource, body, s);
 		break;
 	}
-	Print('---------------------' + '\n\n\n');
+	// Print('---------------------' + '\n\n\n');
 }
 
 function ProcessGet(resource,s)
@@ -134,7 +134,8 @@ function ProcessGet(resource,s)
 		return;
         }
 	file.Open( File.RDONLY );
-	s.TransmitFile(file, false, "HTTP/1.0 200 OK\n\n")
+	l = file.info.size;
+	s.TransmitFile(file, false, "HTTP/1.0 200 OK\nX-ID: 123456789\nContent-Length: "+l+"\n\n")
 	file.Sync();
 	file.Close();
 
@@ -156,7 +157,8 @@ function ProcessPost(resource,body,s)
         file.Close();
 
         file.Open( File.RDONLY );
-	s.TransmitFile(file, false, "HTTP/1.0 200 OK\nX-ID: 123456789\n\n")
+	l = file.info.size;
+	s.TransmitFile(file, false, "HTTP/1.0 200 OK\nX-ID: 123456789\nContent-Length: "+l+"\n\n")
         file.Sync();
         file.Close();
 
