@@ -28,12 +28,18 @@ TODO
  create the file and return it but it has no data (ie. empty)
 
 
-2009/01/29
+2009/01/24
 
 Added some changes to try and figure out the single POST
 being accepted but no luck. Apparently the POST triggers
 the 'readable' function twice, once for headers and the other
 for the body.
+
+2009/01/25
+
+Now accepts multiple POSTs (and GETs) but if the 1st request
+is a POST it will fail. Subsequent POSTs work OK. All POSTs
+will work OK if there's an initial GET.
 
 -- MV
 
