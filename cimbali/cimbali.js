@@ -4,6 +4,8 @@
 LoadModule('jsstd');
 LoadModule('jsio');
 
+Exec('UUID.js');
+
 
 var configuration = { port:8080, address:'0.0.0.0', docroot:'/var/www/db' };
 
@@ -118,6 +120,9 @@ function processHTTPConnectionRequest(data,s)
 	case 'POST':
 		ProcessPost( resource, body, s);
 		break;
+	case 'PUT':
+		ProcessPut( resource, body, s);
+		break;
 	}
 	// Print('---------------------' + '\n\n\n');
 }
@@ -145,8 +150,65 @@ function ProcessPost(resource,body,s)
 {
 	Print('AT RESOURCE: '+resource+'\n');
 	Print('SAVE DATA:\n');
-	Print(body);
+	  Print(body);
 	Print('\nEND DATA\n\n');
+
+	var uuid = Math.uuid();
+	Print('Saving with UUID '+uuid+'\n');
+
+
+        var docroot=configuration.docroot;
+
+        var file = new File( docroot + resource + uuid );
+        file.Open( File.RDWR | File.CREATE_FILE );
+	file.Write(body);
+        file.Sync();
+        file.Close();
+
+	/*
+        file.Open( File.RDONLY );
+	l = file.info.size;
+	s.TransmitFile(file, false, "HTTP/1.0 200 OK\nX-ID: 123456789\nContent-Length: "+l+"\n\n")
+        file.Sync();
+        file.Close();
+	*/
+
+	reply = '{"ok":true,"id":"'+uuid+'","rev":"000001"}\n';
+	l = reply.length;
+
+	s.Write("HTTP/1.0 200 OK\nX-ID: "+uuid+"\nContent-Length: "+l+"\n\n")
+	s.Write(reply);
+
+}
+
+
+function ProcessPut(resource,body,s)
+{
+
+	if(resource[resource.length-1]=='/')
+	{
+		Print('CREATE DATABASE');
+		Print('AT RESOURCE: '+resource+'\n');
+        
+		var docroot=configuration.docroot;
+
+		var dir = new Directory( docroot+resource );
+		
+		dir.Make()
+	
+		reply = '{"ok":true}\n';
+		l = reply.length;
+
+		s.Write("HTTP/1.0 200 OK\nContent-Length: "+l+"\n\n")
+		s.Write(reply);
+	}
+	else
+	{
+	Print('AT RESOURCE: '+resource+'\n');
+	Print('CHANGE DATA:\n');
+	  Print(body);
+	Print('\nEND DATA\n\n');
+
 
         var docroot=configuration.docroot;
 
@@ -162,13 +224,9 @@ function ProcessPost(resource,body,s)
         file.Sync();
         file.Close();
 
+	}
+
 }
-
-
-
-
-
-
 
 
 
