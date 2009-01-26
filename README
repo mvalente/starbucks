@@ -16,6 +16,7 @@ STATUS
 
 - Barebones webserver running
 - Answers both GET and POST
+- Does basic REST/JSON database stuff CouchDB-like
 
 
 
