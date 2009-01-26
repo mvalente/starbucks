@@ -21,11 +21,8 @@ STATUS
 
 TODO
 
-- Accepts POST only once
- 'wget --post-file=test.data http://localhost:8080/zbr0050' will
- create the resource which is then GETable. A second POST request
- like 'wget --post-file=test.data http://localhost:8080/zbr0051' will
- create the file and return it but it has no data (ie. empty)
+- Implement CouchDB like APIs
+- Move code from cimbali (appserver) to sical (dbserver)
 
 
 2009/01/24
