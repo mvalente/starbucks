@@ -41,5 +41,11 @@ Now accepts multiple POSTs (and GETs) but if the 1st request
 is a POST it will fail. Subsequent POSTs work OK. All POSTs
 will work OK if there's an initial GET.
 
+2009/01/26
+
+Now does basic JSON/REST database stuff like CouchDB.
+You can PUT to create DBs or JSON docs and POST to change docs.
+You can GET to retrieve docs.
+
 -- MV
 
