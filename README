@@ -45,5 +45,10 @@ Now does basic JSON/REST database stuff like CouchDB.
 You can PUT to create DBs or JSON docs and POST to change docs.
 You can GET to retrieve docs.
 
+2009/01/27
+
+Now moving current development (on a REST/JSON oriented DB) to
+SICAL. Started implementing CouchDB database API
+
 -- MV
 
