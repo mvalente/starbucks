@@ -22,8 +22,7 @@ STATUS
 
 TODO
 
-- Implement CouchDB like APIs
-- Move code from cimbali (appserver) to sical (dbserver)
+- Move to Jaxer platform instead of jslibs
 
 
 2009/01/24
@@ -49,6 +48,12 @@ You can GET to retrieve docs.
 
 Now moving current development (on a REST/JSON oriented DB) to
 SICAL. Started implementing CouchDB database API
+
+2009/01/28
+
+Most basic CouchDB API implemented. No views or more advanced
+stuff like compress, etc but enough to do the proof of concept
+Going for Jaxer port/moveover next.
 
 -- MV
 

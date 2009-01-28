@@ -123,6 +123,9 @@ function processHTTPConnectionRequest(data,s)
 	case 'PUT':
 		ProcessPut( resource, body, s);
 		break;
+	case 'DELETE':
+		ProcessDelete( resource, body, s);
+		break;
 	}
 	// Print('---------------------' + '\n\n\n');
 }
@@ -133,7 +136,45 @@ function ProcessGet(resource,s)
 
 	if(resource=='/')
 	{
-		reply = '{"SICAL serverside Javascript DB server"}\n';
+		dbs = Directory.List(docroot, Directory.SKIP_BOTH);
+		reply = '{"banner": "SICAL serverside Javascript DB server", "databases": ['+dbs+']}\n';
+
+		l = reply.length;
+
+		s.Write("HTTP/1.0 200 OK\nContent-Length: "+l+"\n\n")
+		s.Write(reply);
+
+		return;
+	}
+	else
+	{
+	  if(resource[resource.length-1]=='/')
+	  {
+
+		var dir = new File( docroot+resource );
+
+		var disk_size= dir.info.size;
+		var doc_count= Directory.List(docroot+resource).length;
+		
+		reply = '{"db_name": "'+resource.split('/')[1]+
+			'", "doc_count": "'+doc_count+
+			'", "disk_size": "'+disk_size+'"}\n';
+		l = reply.length;
+
+		s.Write("HTTP/1.0 200 OK\nContent-Length: "+l+"\n\n")
+		s.Write(reply);
+		return;
+	  }
+	}
+
+	// For CouchDB compatibility; I think it should come on server info
+	if(resource=='/_all_dbs')
+	{
+		Print('ALL DBs \n');
+		reply = Directory.List(docroot, Directory.SKIP_BOTH);
+
+		reply = '{ '+reply+' }';
+
 		l = reply.length;
 
 		s.Write("HTTP/1.0 200 OK\nContent-Length: "+l+"\n\n")
@@ -142,10 +183,14 @@ function ProcessGet(resource,s)
 		return;
 	}
 
-	if(resource=='/_all_dbs')
+	Print('AT ALL DOCS '+resource+'\n');
+	if(db=/(.+)_all_docs$/(resource))
 	{
-		reply = Directory.List(docroot, Directory.SKIP_BOTH);
-		reply = "{" + reply + "}";
+		Print('ALL DOCS AT DB '+db[1]+'\n');
+		Print('PATH '+docroot+db[1]+'\n');
+		reply = Directory.List(docroot+db[1], Directory.SKIP_DIRECTORY);
+		total_rows=reply.length;
+		reply = '{"total_rows": '+total_rows+', "rows": [ '+reply+']}';
 
 		l = reply.length;
 
@@ -251,6 +296,53 @@ function ProcessPut(resource,body,s)
 	}
 
 }
+
+
+
+function ProcessDelete(resource,body,s)
+{
+
+	if(resource[resource.length-1]=='/')
+	{
+		Print('DELETE DATABASE');
+		Print('AT RESOURCE: '+resource+'\n');
+        
+		var docroot=configuration.docroot;
+
+		var dir = new Directory( docroot+resource );
+		
+		dir.Remove()
+	
+		reply = '{"ok":true}\n';
+		l = reply.length;
+
+		s.Write("HTTP/1.0 200 OK\nContent-Length: "+l+"\n\n")
+		s.Write(reply);
+	}
+	else
+	{
+	Print('AT RESOURCE: '+resource+'\n');
+	Print('DELETE DATA:\n');
+	  Print(body);
+	Print('\nEND DATA\n\n');
+
+        var docroot=configuration.docroot;
+
+        var file = new File( docroot + resource );
+        file.Delete();
+
+	reply = '{"ok":true}\n';
+	l = reply.length;
+
+	s.Write("HTTP/1.0 200 OK\nContent-Length: "+l+"\n\n")
+	s.Write(reply);
+	}
+}
+
+
+
+
+
 
 
 
